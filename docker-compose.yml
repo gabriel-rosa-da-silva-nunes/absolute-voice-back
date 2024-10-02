@@ -1,0 +1,24 @@
+version: '3'
+services:
+  postgres:
+    image: "postgres"
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_DB=root
+    restart: always
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U root" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  absolute-voice-back:
+    depends_on:
+      postgres:
+        condition: service_healthy
+    container_name: absolute-voice-back
+    volumes:
+      - ./:/app
+    build: .
+    ports:
+      - "3000:3000"
